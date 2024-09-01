@@ -30,9 +30,11 @@ export default function Layout() {
           <Menu routes={menus}></Menu>
         </div>
       </div>
-      <div className={styles['content-box']}>
+      <div className={styles['rg-box']}>
         <div className={styles['nav-box']} onClick={handleLogout}>退出登录</div>
-        <Outlet></Outlet>
+        <div className={styles['content-box']}>
+          <Outlet></Outlet>
+        </div>
       </div>
     </div>
   )
