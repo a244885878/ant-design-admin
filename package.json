@@ -4,12 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "vite --mode development",
+    "test": "vite --mode test",
+    "pro": "vite --mode production",
+    "build:dev": "tsc -b && vite build --mode development",
+    "build:test": "tsc -b && vite build --mode test",
+    "build:pro": "tsc -b && vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.4.0",
     "antd": "^5.20.3",
     "lodash": "^4.17.21",
     "nprogress": "^0.2.0",
