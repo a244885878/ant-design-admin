@@ -4,47 +4,47 @@ import useStore from '@/store'
 import { type RouteObject, Navigate } from 'react-router-dom'
 import router from '@/router';
 import NProgress from 'nprogress'
+import * as Icons from '@ant-design/icons';
 
 const whiteList = ['/login']
 
-const menus: RouteObject[] = [
+const menus: RouteObject & { [key: string]: any }[] = [
   {
     path: '/',
+    key: '/',
+    label: '首页',
+    icon: 'HomeOutlined',
     element: 'Home/index',
-    handle: {
-      title: '首页'
-    },
   },
   {
     id: 'about',
     path: '/about',
+    key: '/about',
+    label: '关于',
+    icon: 'CoffeeOutlined',
     element: 'About/index',
-    handle: {
-      title: '关于',
-    },
     children: [
       {
         id: 'about-redirect',
         path: '',
+        key: '',
         index: true,
         element: '/about/news',
       },
       {
         path: '/about/news',
+        key: '/about/news',
+        label: '新闻页',
         element: 'About/News/index',
-        handle: {
-          title: '新闻页'
-        },
       },
       {
         path: '/about/games',
+        key: '/about/games',
+        label: '游戏资讯',
         element: 'About/Games/index',
-        handle: {
-          title: '游戏资讯'
-        },
       },
     ]
-  }
+  },
 ]
 
 // 模拟后端返回
@@ -60,11 +60,15 @@ const getMenus = () => {
 
 // 递归过滤菜单
 const modules = import.meta.glob('@/views/**/*.tsx');
-const setDynamicViews = (menus: RouteObject[]) => {
-  menus.forEach((v: RouteObject) => {
+type Menus = RouteObject & { [key: string]: any }
+const setDynamicViews = (menus: Menus[]) => {
+  menus.forEach((v: Menus) => {
     if (!v.index) {
       const importModule = modules[`/src/views/${v.element}.tsx`];
       v.element = createElement(lazy(() => importModule() as Promise<{ default: ComponentType }>));
+      if (v.icon) {
+        v.icon = createElement((Icons as any)[v.icon])
+      }
     } else {
       v.element = <Navigate to={v.element as string} replace />
     }
@@ -96,6 +100,10 @@ const useGuard = () => {
             const newMenus = setDynamicViews(JSON.parse(JSON.stringify(res)))
             router.routes[0].children = newMenus as any[]
             setMenus(newMenus)
+            // 递归查找路由，不存在重定向到404
+            if (location.pathname === '/404') {
+              navigate('/404', { replace: true })
+            }
             setPageLoading(false)
           }
         }
@@ -104,7 +112,7 @@ const useGuard = () => {
           navigate('/login', { replace: true })
         }
       }
-      
+
       NProgress.done()
     }
     asyncFn()

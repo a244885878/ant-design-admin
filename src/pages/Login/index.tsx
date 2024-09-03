@@ -2,7 +2,7 @@ import React, { startTransition } from "react";
 import useGuard from '@/hooks/useGuard'
 import { useNavigate } from 'react-router-dom';
 import useStore from '@/store'
-import { Button, Form, Input, type FormProps, message } from 'antd';
+import { Button, Form, Input, type FormProps } from 'antd';
 import styles from './index.module.scss'
 import { systemTitle } from "@/utils/config";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -21,7 +21,6 @@ const Login: React.FC = () => {
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     console.log(values)
-    message.success('登录成功')
     startTransition(() => {
       // 每次登录之前清空路由表
       setMenus([])

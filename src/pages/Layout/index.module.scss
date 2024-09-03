@@ -4,53 +4,77 @@
 	box-sizing: border-box;
 	display: flex;
 	overflow: hidden;
+	flex-wrap: wrap;
 
-	.sidebar {
-		width: 200px;
-		height: 100%;
-		background: #a17d60;
+	$navHeight: 56px;
+
+	.nav-box {
+		width: 100%;
+		height: $navHeight;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		box-sizing: border-box;
 		padding: 20px;
-		color: #fff;
-		flex-shrink: 0;
+		border-bottom: 1px solid rgba(5, 5, 5, 0.06);
 
-		h3 {
-			width: 100%;
-			text-align: center;
+		.logo-box {
+			display: flex;
+			align-items: center;
+			font-weight: 500;
+			color: rgba(0, 0, 0, 0.88);
+			font-size: 16px;
+
+			img {
+				width: 28px;
+				height: 28px;
+				margin-right: 10px;
+			}
 		}
+
+		.user-info-box {
+			display: flex;
+			align-items: center;
+			color: rgba(0, 0, 0, 0.45);
+			font-size: 14px;
+			padding: 10px;
+			cursor: pointer;
+			&:hover {
+				background-color: rgba(0, 0, 0, 0.03);
+			}
+		}
+	}
+
+	.sidebar {
+		width: 256px;
+		height: calc(100% - $navHeight);
+		box-sizing: border-box;
+		padding: 10px;
+		flex-shrink: 0;
+		position: relative;
+		border-right: 1px solid rgba(5, 5, 5, 0.06);
 
 		.menu-box {
 			width: 100%;
-			height: calc(100% - 50px);
+			height: 100%;
 			overflow-y: auto;
-			margin-top: 30px;
+			transition: all 0.2s;
 		}
 	}
 
 	.rg-box {
 		flex: 1;
-		height: 100%;
+		height: calc(100% - $navHeight);
 		display: flex;
 		flex-direction: column;
-    overflow: hidden;
-
-		.nav-box {
-			width: 100%;
-			height: 50px;
-			background: #fff;
-			display: flex;
-			align-items: center;
-			justify-content: flex-end;
-			box-sizing: border-box;
-			padding: 20px;
-		}
+		overflow: hidden;
 
 		.content-box {
 			flex: 1;
 			height: 100%;
 			box-sizing: border-box;
-			background: #f6f7fb;
 			overflow: auto;
+			padding: 20px;
 		}
 	}
 }

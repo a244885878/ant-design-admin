@@ -6,9 +6,7 @@ const Page404: React.FC = () => {
   useGuard()
 
   return (
-    <div>
-      <h1>404</h1>
-    </div>
+    <h1>404</h1>
   )
 };
 

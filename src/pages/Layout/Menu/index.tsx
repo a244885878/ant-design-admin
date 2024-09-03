@@ -1,35 +1,86 @@
-import { type RouteObject, useNavigate, useLocation } from 'react-router-dom'
-import { startTransition, Fragment } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { startTransition, useEffect, useState } from 'react'
 import NProgress from 'nprogress'
+import { Menu, type MenuProps, ConfigProvider } from 'antd';
+import useStore from '@/store'
 
-export default function Menu({ routes }: { routes: RouteObject[] }) {
+export default function MenuFc() {
+
+  type MenuItem = Required<MenuProps>['items'][number];
 
   const navigate = useNavigate()
   const location = useLocation()
+  const { menus } = useStore()
+  const [items, setItems] = useState<MenuItem[]>([])
 
-  const handleItem = (v: RouteObject) => {
-    if (v.path === location.pathname) return
+  // 过滤路由表中重定向的子项
+  function removeIndexRoutes(menus: any[]): MenuItem[] {
+    return menus
+      .filter(menu => !menu.index)
+      .map(menu => ({
+        ...menu,
+        children: menu.children ? removeIndexRoutes(menu.children) : undefined
+      }));
+  }
+
+  // 查找当前路由所有的父级路由(用于展开菜单)
+  function getOpenKeysFromPath(pathname: string): string[] {
+    const openKeys: string[] = [];
+
+    const findKey = (items: any[], path: string) => {
+      for (const item of items) {
+        if (item.path === path) {
+          if (item.children) {
+            openKeys.push(item.key);
+          }
+          return true;
+        }
+        if (item.children) {
+          if (findKey(item.children, path)) {
+            openKeys.push(item.key);
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
+    findKey(menus, pathname);
+    return openKeys.reverse();
+  }
+
+  useEffect(() => {
+    setItems(removeIndexRoutes(menus))
+  }, [])
+
+  const handleItem = (v: MenuItem) => {
+    if (v!.key === location.pathname) return
     NProgress.start()
     startTransition(() => {
-      navigate(v.path!)
+      navigate(v!.key as string)
     })
   }
 
   return (
-    <ul style={{ paddingLeft: '10px' }}>
-      {
-        routes.map((v: RouteObject) => {
-          if (v.children?.length) {
-            return (
-              <Fragment key={v.path}>
-                <li onClick={() => handleItem(v)}>{v.handle.title}</li>
-                <Menu routes={v.children}></Menu>
-              </Fragment>
-            )
-          }
-          return <li onClick={() => handleItem(v)} key={v.path}>{v.handle?.title}</li>
-        })
-      }
-    </ul>
+    <ConfigProvider
+      theme={{
+        components: {
+          Menu: {
+            itemBg: 'transparent',
+            activeBarBorderWidth: 0,
+            subMenuItemBg: 'transparent'
+          },
+        },
+      }}
+    >
+      <Menu
+        onClick={handleItem}
+        style={{ width: '100%', height: '100%' }}
+        selectedKeys={[location.pathname]}
+        defaultOpenKeys={getOpenKeysFromPath(location.pathname)}
+        mode="inline"
+        items={items}
+      />
+    </ConfigProvider>
   )
 }

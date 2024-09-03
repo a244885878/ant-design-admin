@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import useStore from '@/store'
 import router from '@/router'
+import PageLoading from "./components/PageLoading";
 
 const App: React.FC = () => {
 
@@ -13,7 +14,7 @@ const App: React.FC = () => {
   }, [pageLoading])
 
   if (loading) {
-    return <div>加载中...</div>
+    return <PageLoading></PageLoading>
   }
 
   return (
