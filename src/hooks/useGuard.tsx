@@ -1,21 +1,33 @@
 import { useEffect, createElement, lazy, type ComponentType } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, type RouteObject, Navigate } from 'react-router-dom';
 import useStore from '@/store'
-import { type RouteObject, Navigate } from 'react-router-dom'
 import router from '@/router';
 import NProgress from 'nprogress'
 import * as Icons from '@ant-design/icons';
+import { systemTitle } from '@/utils/config'
 
 const whiteList = ['/login']
 
+/*
+  index:重定向路由、hidden:不在菜单显示的路由
+*/
+const homeRoute = {
+  path: '/',
+  key: '/',
+  label: '首页',
+  icon: 'HomeOutlined',
+  element: 'Home/index',
+}
+const route404 = {
+  id: '404',
+  path: '/404',
+  key: '/404',
+  label: '404',
+  element: 'Error/Page404',
+  hidden: true
+}
 const menus: RouteObject & { [key: string]: any }[] = [
-  {
-    path: '/',
-    key: '/',
-    label: '首页',
-    icon: 'HomeOutlined',
-    element: 'Home/index',
-  },
+  homeRoute,
   {
     id: 'about',
     path: '/about',
@@ -43,9 +55,27 @@ const menus: RouteObject & { [key: string]: any }[] = [
         label: '游戏资讯',
         element: 'About/Games/index',
       },
+      {
+        path: '/about/demo',
+        key: '/about/demo',
+        label: '游戏demo',
+        element: 'About/Demo/index',
+        icon: 'CoffeeOutlined',
+        children: [
+          {
+            path: '/about/demo/demo2',
+            key: '/about/demo/demo2',
+            label: '游戏demo2',
+            element: 'About/Demo/Demo2/index',
+          }
+        ]
+      },
     ]
   },
+  route404
 ]
+// 平铺的菜单数据(用于比较路由)
+const tiledMenus: { path: string, label: string }[] = []
 
 // 模拟后端返回
 const getMenus = () => {
@@ -69,6 +99,10 @@ const setDynamicViews = (menus: Menus[]) => {
       if (v.icon) {
         v.icon = createElement((Icons as any)[v.icon])
       }
+      tiledMenus.push({
+        path: v.path,
+        label: v.label
+      })
     } else {
       v.element = <Navigate to={v.element as string} replace />
     }
@@ -85,6 +119,7 @@ const useGuard = () => {
   const { menus, setMenus, setPageLoading } = useStore()
 
   useEffect(() => {
+    NProgress.start()
 
     const asyncFn = async () => {
       const token = localStorage.getItem('token')
@@ -100,11 +135,11 @@ const useGuard = () => {
             const newMenus = setDynamicViews(JSON.parse(JSON.stringify(res)))
             router.routes[0].children = newMenus as any[]
             setMenus(newMenus)
-            // 递归查找路由，不存在重定向到404
-            if (location.pathname === '/404') {
-              navigate('/404', { replace: true })
-            }
             setPageLoading(false)
+          }
+          // 比较路由(不存在重定向到404)
+          if (tiledMenus?.length && !tiledMenus.find(v => v.path === location.pathname)) {
+            navigate('/404', { replace: true })
           }
         }
       } else {
@@ -112,7 +147,13 @@ const useGuard = () => {
           navigate('/login', { replace: true })
         }
       }
-
+      // title设置
+      if (location.pathname === '/login') {
+        document.title = `登录 - ${systemTitle}`
+      } else {
+        const currentRoute = tiledMenus.find(v => v.path === location.pathname)
+        document.title = `${currentRoute?.label} - ${systemTitle}`
+      }
       NProgress.done()
     }
     asyncFn()

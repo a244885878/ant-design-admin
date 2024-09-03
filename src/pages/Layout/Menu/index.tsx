@@ -1,10 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { startTransition, useEffect, useState } from 'react'
-import NProgress from 'nprogress'
 import { Menu, type MenuProps, ConfigProvider } from 'antd';
 import useStore from '@/store'
 
-export default function MenuFc() {
+export default function MenuFc({ isFold }: { isFold: boolean }) {
 
   type MenuItem = Required<MenuProps>['items'][number];
 
@@ -16,7 +15,7 @@ export default function MenuFc() {
   // 过滤路由表中重定向的子项
   function removeIndexRoutes(menus: any[]): MenuItem[] {
     return menus
-      .filter(menu => !menu.index)
+      .filter(menu => !menu.index && !menu.hidden)
       .map(menu => ({
         ...menu,
         children: menu.children ? removeIndexRoutes(menu.children) : undefined
@@ -55,7 +54,6 @@ export default function MenuFc() {
 
   const handleItem = (v: MenuItem) => {
     if (v!.key === location.pathname) return
-    NProgress.start()
     startTransition(() => {
       navigate(v!.key as string)
     })
@@ -80,6 +78,7 @@ export default function MenuFc() {
         defaultOpenKeys={getOpenKeysFromPath(location.pathname)}
         mode="inline"
         items={items}
+        inlineCollapsed={isFold}
       />
     </ConfigProvider>
   )

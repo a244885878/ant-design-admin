@@ -3,24 +3,29 @@ import Menu from './Menu/index'
 import { Outlet } from 'react-router-dom'
 import useGuard from '@/hooks/useGuard'
 import { useNavigate } from 'react-router-dom';
-import { startTransition } from 'react'
+import { startTransition, useState } from 'react'
 import useStore from '@/store'
-import { Dropdown, Avatar, type MenuProps } from 'antd';
+import { Dropdown, Avatar, type MenuProps, Button } from 'antd';
 import { systemTitle } from '@/utils/config';
+import { LeftOutlined } from '@ant-design/icons'
 
 export default function Layout() {
 
   useGuard()
 
-  const { userInfo } = useStore()
-
+  const { userInfo, menus } = useStore()
   const navigate = useNavigate()
+  const [isFold, setFold] = useState(false)
 
   const handleLogout = () => {
     startTransition(() => {
       localStorage.removeItem('token')
       navigate('/login')
     })
+  }
+
+  const handleFold = () => {
+    setFold(!isFold)
   }
 
   const items: MenuProps['items'] = [
@@ -34,7 +39,7 @@ export default function Layout() {
     },
   ];
 
-  if (!localStorage.getItem('token')) {
+  if (!menus?.length) {
     return null
   }
 
@@ -52,9 +57,11 @@ export default function Layout() {
           </div>
         </Dropdown>
       </div>
-      <div className={styles.sidebar}>
+      <div className={styles.sidebar} style={{ width: isFold ? '80px' : '256px' }}>
+        <Button onClick={() => handleFold()} className={[styles['fold-button'], isFold ? styles['is-fold'] : ''].join(' ')}
+          size='small' shape="circle" icon={<LeftOutlined style={{ fontSize: '12px', color: '#ddd' }} />} />
         <div className={styles['menu-box']}>
-          <Menu></Menu>
+          <Menu isFold={isFold}></Menu>
         </div>
       </div>
       <div className={styles['rg-box']}>

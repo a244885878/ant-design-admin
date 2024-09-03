@@ -51,14 +51,26 @@
 		box-sizing: border-box;
 		padding: 10px;
 		flex-shrink: 0;
-		position: relative;
 		border-right: 1px solid rgba(5, 5, 5, 0.06);
+    position: relative;
+    transition: all 0.2s;
+
+    .fold-button{
+      position: absolute;
+      right: 0;
+      top: 15px;
+      transform: translateX(50%);
+      transition: all 0.2s;
+    }
+
+    .is-fold{
+      transform: translateX(50%) rotate(180deg);
+    }
 
 		.menu-box {
 			width: 100%;
 			height: 100%;
 			overflow-y: auto;
-			transition: all 0.2s;
 		}
 	}
 
