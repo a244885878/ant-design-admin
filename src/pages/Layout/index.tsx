@@ -1,7 +1,7 @@
 import styles from './index.module.scss'
 import Menu from './Menu/index'
 import { Outlet } from 'react-router-dom'
-import useGuard from '@/utils/useGuard'
+import useGuard from '@/hooks/useGuard'
 import { useNavigate } from 'react-router-dom';
 import { startTransition } from 'react'
 import useStore from '@/store'
@@ -20,6 +20,10 @@ export default function Layout() {
       localStorage.removeItem('token')
       navigate('/login')
     })
+  }
+
+  if (!localStorage.getItem('token')) {
+    return null
   }
 
   return (

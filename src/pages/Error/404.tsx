@@ -1,5 +1,5 @@
 import React from "react";
-import useGuard from '@/utils/useGuard'
+import useGuard from '@/hooks/useGuard'
 
 const Page404: React.FC = () => {
 

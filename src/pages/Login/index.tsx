@@ -1,5 +1,5 @@
 import React, { startTransition } from "react";
-import useGuard from '@/utils/useGuard'
+import useGuard from '@/hooks/useGuard'
 import { useNavigate } from 'react-router-dom';
 import useStore from '@/store'
 import type { FormProps } from 'antd';
@@ -25,6 +25,10 @@ const Login: React.FC = () => {
       localStorage.setItem('token', '123')
       navigate('/')
     })
+  }
+
+  if (localStorage.getItem('token')) {
+    return null
   }
 
   return (
