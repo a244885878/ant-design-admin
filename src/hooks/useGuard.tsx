@@ -140,7 +140,7 @@ const useGuard = () => {
         document.title = `登录 - ${systemTitle}`
       } else {
         const currentRoute = tiledMenus.find(v => v.path === location.pathname)
-        document.title = `${currentRoute?.label} - ${systemTitle}`
+        document.title = `${currentRoute?.label ?? '404'} - ${systemTitle}`
       }
       NProgress.done()
     }
