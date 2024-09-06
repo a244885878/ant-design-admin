@@ -26,6 +26,12 @@ const route404 = {
   element: 'Error/Page404',
   hidden: true
 }
+const redirect404 = {
+  id: 'redirect404',
+  path: '*',
+  element: 'Error/Page404',
+  hidden: true
+}
 const menus: RouteObject & { [key: string]: any }[] = [
   homeRoute,
   {
@@ -54,25 +60,11 @@ const menus: RouteObject & { [key: string]: any }[] = [
         key: '/about/games',
         label: '游戏资讯',
         element: 'About/Games/index',
-      },
-      {
-        path: '/about/demo',
-        key: '/about/demo',
-        label: '游戏demo',
-        element: 'About/Demo/index',
-        icon: 'CoffeeOutlined',
-        children: [
-          {
-            path: '/about/demo/demo2',
-            key: '/about/demo/demo2',
-            label: '游戏demo2',
-            element: 'About/Demo/Demo2/index',
-          }
-        ]
-      },
+      }
     ]
   },
-  route404
+  route404,
+  redirect404
 ]
 // 平铺的菜单数据(用于比较路由)
 const tiledMenus: { path: string, label: string }[] = []
@@ -100,7 +92,7 @@ const setDynamicViews = (menus: Menus[]) => {
         v.icon = createElement((Icons as any)[v.icon])
       }
       tiledMenus.push({
-        path: v.path,
+        path: v.path!,
         label: v.label
       })
     } else {
@@ -136,10 +128,6 @@ const useGuard = () => {
             router.routes[0].children = newMenus as any[]
             setMenus(newMenus)
             setPageLoading(false)
-          }
-          // 比较路由(不存在重定向到404)
-          if (tiledMenus?.length && !tiledMenus.find(v => v.path === location.pathname)) {
-            navigate('/404', { replace: true })
           }
         }
       } else {

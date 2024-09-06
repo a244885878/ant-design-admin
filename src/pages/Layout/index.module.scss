@@ -53,14 +53,14 @@
 		flex-shrink: 0;
 		border-right: 1px solid rgba(5, 5, 5, 0.06);
     position: relative;
-    transition: all 0.2s;
+    transition: all 0.3s;
 
     .fold-button{
       position: absolute;
       right: 0;
       top: 15px;
       transform: translateX(50%);
-      transition: all 0.2s;
+      transition: all 0.3s;
     }
 
     .is-fold{
