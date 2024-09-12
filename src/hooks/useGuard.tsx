@@ -1,6 +1,6 @@
 import { useEffect, createElement, lazy, type ComponentType } from 'react';
 import { useLocation, useNavigate, type RouteObject, Navigate } from 'react-router-dom';
-import useStore from '@/store'
+import useStore, { type TiledMenus } from '@/store'
 import router from '@/router';
 import NProgress from 'nprogress'
 import * as Icons from '@ant-design/icons';
@@ -66,8 +66,8 @@ const menus: RouteObject & { [key: string]: any }[] = [
   route404,
   redirect404
 ]
-// 平铺的菜单数据(用于比较路由)
-const tiledMenus: { path: string, label: string }[] = []
+// 记录平铺的菜单数据(用于比较路由)
+const recordTiledMenus: TiledMenus = []
 
 // 模拟后端返回
 const getMenus = () => {
@@ -91,7 +91,7 @@ const setDynamicViews = (menus: Menus[]) => {
       if (v.icon) {
         v.icon = createElement((Icons as any)[v.icon])
       }
-      tiledMenus.push({
+      recordTiledMenus.push({
         path: v.path!,
         label: v.label
       })
@@ -108,7 +108,7 @@ const setDynamicViews = (menus: Menus[]) => {
 const useGuard = () => {
   const location = useLocation();
   const navigate = useNavigate()
-  const { menus, setMenus, setPageLoading } = useStore()
+  const { menus, setMenus, setPageLoading, setTiledMenus, tiledMenus } = useStore()
 
   useEffect(() => {
     NProgress.start()
@@ -127,6 +127,7 @@ const useGuard = () => {
             const newMenus = setDynamicViews(JSON.parse(JSON.stringify(res)))
             router.routes[0].children = newMenus as any[]
             setMenus(newMenus)
+            setTiledMenus(recordTiledMenus)
             setPageLoading(false)
           }
         }

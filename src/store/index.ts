@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { type RouteObject } from 'react-router-dom';
 
-type UserInfo = {
+export type UserInfo = {
   name: string
 }
+export type TiledMenus = { path: string, label: string }[]
 interface StoreState {
   menus: RouteObject[],
   setMenus: (menus: RouteObject[]) => void
@@ -11,6 +12,8 @@ interface StoreState {
   setPageLoading: (val: boolean) => void
   userInfo: UserInfo
   setUserInfo: (userInfo: UserInfo) => void
+  tiledMenus: TiledMenus
+  setTiledMenus: (tiledMenus: TiledMenus) => void
 }
 
 const useStore = create<StoreState>((set) => ({
@@ -22,6 +25,8 @@ const useStore = create<StoreState>((set) => ({
     name: 'admin'
   },
   setUserInfo: (userInfo) => set(() => ({ userInfo })),
+  tiledMenus: [],
+  setTiledMenus: (tiledMenus) => set(() => ({ tiledMenus }))
 }));
 
 export default useStore;
