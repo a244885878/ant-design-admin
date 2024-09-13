@@ -1,19 +1,16 @@
-import React, { startTransition } from "react";
+import React from "react";
 import { Button, Empty, Typography } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { navigateRoute } from '@/utils/tools'
 
 const Page404: React.FC = () => {
 
-  const navigate = useNavigate()
 
   const styleObj = {
     width: '100%', height: '100%', display: 'flex', justifyContent: 'center'
   }
 
   const backHome = () => {
-    startTransition(() => {
-      navigate('/', { replace: true })
-    })
+    navigateRoute('/', { replace: true })
   }
 
   return (

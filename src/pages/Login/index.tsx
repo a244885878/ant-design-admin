@@ -1,11 +1,11 @@
-import React, { startTransition } from "react";
+import React from "react";
 import useGuard from '@/hooks/useGuard'
-import { useNavigate } from 'react-router-dom';
 import useStore from '@/store'
 import { Button, Form, Input, type FormProps } from 'antd';
 import styles from './index.module.scss'
 import { systemTitle } from "@/utils/config";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { navigateRoute } from '@/utils/tools'
 
 type FieldType = {
   username?: string;
@@ -16,17 +16,14 @@ const Login: React.FC = () => {
 
   useGuard()
 
-  const navigate = useNavigate()
-  const { setMenus } = useStore()
+  const { removeTokenRoute } = useStore()
 
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     console.log(values)
-    startTransition(() => {
-      // 每次登录之前清空路由表
-      setMenus([])
-      localStorage.setItem('token', '123')
-      navigate('/')
-    })
+    // 登录之前先清空动态路由表和token
+    removeTokenRoute()
+    localStorage.setItem('token', '123')
+    navigateRoute('/', { replace: true })
   }
 
   if (localStorage.getItem('token')) {

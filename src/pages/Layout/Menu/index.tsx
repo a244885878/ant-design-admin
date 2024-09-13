@@ -1,13 +1,13 @@
-import { useNavigate, useLocation } from 'react-router-dom'
-import { startTransition, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { Menu, type MenuProps, ConfigProvider } from 'antd';
 import useStore from '@/store'
+import { navigateRoute } from '@/utils/tools';
 
 export default function MenuFc({ isFold }: { isFold: boolean }) {
 
   type MenuItem = Required<MenuProps>['items'][number];
 
-  const navigate = useNavigate()
   const location = useLocation()
   const { menus } = useStore()
   const [items, setItems] = useState<MenuItem[]>([])
@@ -54,9 +54,7 @@ export default function MenuFc({ isFold }: { isFold: boolean }) {
 
   const handleItem = (v: MenuItem) => {
     if (v!.key === location.pathname) return
-    startTransition(() => {
-      navigate(v!.key as string)
-    })
+    navigateRoute(v!.key as string)
   }
 
   return (

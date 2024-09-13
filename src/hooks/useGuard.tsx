@@ -111,7 +111,9 @@ const useGuard = () => {
   const { menus, setMenus, setPageLoading, setTiledMenus, tiledMenus } = useStore()
 
   useEffect(() => {
-    NProgress.start()
+    // 初始化加载触发，后续跳转路由时才触发
+    const notRoutes = !menus?.length
+    if (notRoutes) NProgress.start()
 
     const asyncFn = async () => {
       const token = localStorage.getItem('token')
@@ -121,7 +123,7 @@ const useGuard = () => {
           navigate('/', { replace: true })
         } else {
           // 获取路由表(仅获取一次)
-          if (!menus?.length) {
+          if (notRoutes) {
             setPageLoading(true)
             const res = await getMenus()
             const newMenus = setDynamicViews(JSON.parse(JSON.stringify(res)))

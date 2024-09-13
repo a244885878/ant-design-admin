@@ -2,30 +2,28 @@ import styles from './index.module.scss'
 import Menu from './Menu/index'
 import { Outlet } from 'react-router-dom'
 import useGuard from '@/hooks/useGuard'
-import { useNavigate } from 'react-router-dom';
-import { startTransition, useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import useStore from '@/store'
 import { Dropdown, Avatar, type MenuProps, Button } from 'antd';
 import { systemTitle } from '@/utils/config';
 import { LeftOutlined, MenuOutlined } from '@ant-design/icons'
 import DrawerMenu from './DrawerMenu'
+import { navigateRoute } from '@/utils/tools'
 
 export default function Layout() {
 
   useGuard()
 
-  const { userInfo, menus } = useStore()
-  const navigate = useNavigate()
+  const { userInfo, menus, removeTokenRoute } = useStore()
   const [isFold, setFold] = useState(false)
   const [showMenu, setShowMenu] = useState(true)
   const [openDrawerMenu, setOpenDrawerMenu] = useState(false)
   const foldFlag = useRef(false)
 
   const handleLogout = () => {
-    startTransition(() => {
-      localStorage.removeItem('token')
-      navigate('/login')
-    })
+    // 退出登录清空动态路由表和token
+    removeTokenRoute()
+    navigateRoute('/login', { replace: true })
   }
 
   const handleFold = () => {
